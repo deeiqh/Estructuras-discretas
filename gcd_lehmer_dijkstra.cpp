@@ -60,8 +60,6 @@ void lehmer_gcd(Tipo x, Tipo y)
                                                     // Pero si se usa 10 se demora t, con (length_bits - MAX_POTENCIAS +1) le
                                                     // toma menos, t/2, es un número "adecuado".
 	*/
-
-        cout << "grupos: " << x_ << ' '<< y_ <<' '<< grupos_x << grupos_y << '\n';
         a = 1; b = 0; c = 0; d = 1;
         if(grupos_x == grupos_y){ //necesario pues en la siguiente vuelta hay que asegurar que x e y tengan la misma cantidad d cifras
             while( ((y_+c) != 0) && ((y_+d) != 0) ){
