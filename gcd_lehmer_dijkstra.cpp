@@ -35,7 +35,7 @@ int main()
 }
 
 Tipo *genera_array_base(Tipo base);
-Tipo digitos_base(Tipo num, Tipo arr[], Tipo &grupos);
+Tipo digitos_base(Tipo num, Tipo arr[]);
 
 void lehmer_gcd(Tipo x, Tipo y)
 {
@@ -51,9 +51,9 @@ void lehmer_gcd(Tipo x, Tipo y)
                                        // si es base 2 se trata de una forma especial (moviendo bits)
     while(y >= base){
 
-        x_ = digitos_base(x, arr_potencias, grupos_x ); // x_ tendrá los dígitos más significativos que unidos serán <= a la base.
+        x_ = digitos_base(x, arr_potencias ); // x_ tendrá los dígitos más significativos que unidos serán <= a la base.
                               // la función usa búsqueda binaria en el array de potencias  de la base
-        y_ = digitos_base(y, arr_potencias, grupos_y);
+        y_ = digitos_base(y, arr_potencias);
 	/*
         x_ = x >> (length_bits -MAX_POTENCIAS +1); //mejor mover en base 2. si se hace en base 10 se pirde mucha significancia
         y_ = y >> (length_bits- MAX_POTENCIAS +1); // beta^p = beta³ = 10³ = base = 1000 = 2^10 -> se mueven 10 bits.
@@ -61,7 +61,7 @@ void lehmer_gcd(Tipo x, Tipo y)
                                                     // toma menos, t/2, es un número "adecuado".
 	*/
 
-        cout << "grupos: " << x_ << ' '<< y_ <<' '<< grupos_x << grupos_y << '\n';
+        cout << "grupos: " << x_ << ' '<< y_ <<'\n';
         a = 1; b = 0; c = 0; d = 1;
         if(grupos_x == grupos_y){ //necesario pues en la siguiente vuelta hay que asegurar que x e y tengan la misma cantidad d cifras
             while( ((y_+c) != 0) && ((y_+d) != 0) ){
@@ -70,6 +70,7 @@ void lehmer_gcd(Tipo x, Tipo y)
                 if (q != q_){
                     break;
                 }
+
                 t=a-q*c;
                 a = c;
                 c = t;
@@ -79,6 +80,8 @@ void lehmer_gcd(Tipo x, Tipo y)
                 t = x_ - q*y_;
                 x_ = y_;
                 y_ = t;
+
+
             }
         }
         if (b == 0){
@@ -134,15 +137,11 @@ Tipo *genera_array_base(Tipo base)
 
 Tipo b_binaria(Tipo num, Tipo arr[], Tipo low, Tipo high); // devuelve el valor de la
                                                     // potencia <= num dentro de arr
-Tipo digitos_base(Tipo num, Tipo arr[], Tipo &grupos)
+Tipo digitos_base(Tipo num, Tipo arr[])
 {
-    grupos = b_binaria(num, arr, 0, MAX_POTENCIAS+2 -1);
-    if (grupos == 0)
-        grupos = 1;
-    else
-        if (grupos == MAX_POTENCIAS+1 )
-            grupos = MAX_POTENCIAS;
-    return num / arr [grupos];
+
+
+    return num / arr [b_binaria(num, arr, 0, MAX_POTENCIAS+2 -1)];
 }
 
 Tipo b_binaria(Tipo x, Tipo arr[], Tipo low, Tipo high)
