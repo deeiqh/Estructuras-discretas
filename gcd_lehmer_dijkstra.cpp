@@ -53,7 +53,7 @@ void lehmer_gcd(Tipo x, Tipo y)
                               // la función usa búsqueda binaria en el array de potencias  de la base
         y_ = digitos_base(y, arr_potencias);
 		*/
-        x_ = x >> (length_bits -MAX_POTENCIAS +1); //mejor mover en base 2. si se hace en base 10 se pirde mucha significancia
+        x_ = x >> (length_bits -MAX_POTENCIAS +1); // mejor mover en base 2. si se hace en base 10 se pirde mucha significancia
         y_ = y >> (length_bits- MAX_POTENCIAS +1); // beta^p = beta³ = 10³ = base = 1000 = 2^10 -> se mueven 10 bits. 
                                                     // Pero si se usa 10 se demora t, con (length_bits - MAX_POTENCIAS +1) le
                                                     // toma menos, t/2, es un número "adecuado".
