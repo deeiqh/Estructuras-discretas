@@ -1,6 +1,5 @@
 Algoritmo:
 	Tomado de HANDBOOK of APPLIED CRYPTOGRAPHY
-
 INPUT: Dos enteros positivos(x ≥ y) que sean >= a la base.
 OUTPUT: gcd(x, y).
 1. While y ≥ b do the following:
@@ -192,10 +191,3 @@ Tipo dijkstra_euclides( Tipo a,  Tipo b){
         return dijkstra_euclides(a,b);
     }
 }
-
-Detallar como el contenido de las variables cambia en cada paso (Seguimiento de código
-con datos de entrada reales (números enteros):
-
-
-
-
