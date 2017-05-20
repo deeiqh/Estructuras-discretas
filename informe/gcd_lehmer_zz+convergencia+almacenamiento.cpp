@@ -185,7 +185,6 @@ Tipo digitos_base(Tipo num, Tipo arr[], int &grupos)
 int b_binaria(Tipo x, Tipo arr[], int low, int high)
 {
     int medio;
-	almacenamiento += 1;
     if (high > low)
         medio= (high-low)/2 + low;
     else
