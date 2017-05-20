@@ -25,11 +25,11 @@ int main()
     double segs;
 
 	Tipo x, y;
-	SetBit(x,16);
-    SetBit(y,16);    
+	SetBit(x,32);
+    	SetBit(y,32);    
 
-	x = 34245;
-	y = 8655;
+	x = 657343812;
+	y = 431056703;
 	almacenamiento++;
 	almacenamiento++;
     cout << "Aplicando Lehmer, gcd(" << x << ',' << y << ")\n";
