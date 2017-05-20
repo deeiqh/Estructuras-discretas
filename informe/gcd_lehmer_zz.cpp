@@ -7,12 +7,13 @@ OUTPUT
 
 #include <iostream>
 #include <limits.h>
-
+#include<NTL/ZZ.h>
 
 #define MAX_POTENCIAS 3 // para generar un arreglo de potencias de la base
 
 using namespace std;
-using Tipo = unsigned char;
+using namespace NTL;
+typedef ZZ Tipo;
 
 void lehmer_gcd(Tipo x, Tipo y);
 Tipo dijkstra_euclides( Tipo a,  Tipo b);
@@ -21,14 +22,18 @@ int iteraciones = 0;
 int main()
 {
     double segs;
-    cout << sizeof(unsigned short);
-    Tipo x = 634;
-    Tipo y = 123;
+
+	Tipo x, y;
+	SetBit(x,64);
+    SetBit(y,64);    
+
+	x = 34245;
+	y = 8655;
 
     cout << "Aplicando Lehmer, gcd(" << x << ',' << y << ")\n";
     lehmer_gcd(x,y);
 
-    int dj;
+    Tipo dj;
     clock_t t_ini = clock();
     dj = dijkstra_euclides(x,y);
     clock_t t_fin = clock();
@@ -39,7 +44,7 @@ int main()
 }
 
 Tipo *genera_array_base(Tipo base);
-Tipo digitos_base(Tipo num, Tipo arr[], Tipo &grupos);
+Tipo digitos_base(Tipo num, Tipo arr[], int &grupos);
 
 void lehmer_gcd(Tipo x, Tipo y)
 {
@@ -47,10 +52,12 @@ void lehmer_gcd(Tipo x, Tipo y)
 
     Tipo x_, y_, a, b, c, d;
     Tipo q, q_, t, tt, u;
-    Tipo grupos_x;
-    Tipo grupos_y;
-    Tipo base = 1000; // determina un arreglo de potencias de la base.
-    Tipo length_bits = sizeof(int)*CHAR_BIT;
+    int grupos_x;
+    int grupos_y;
+    Tipo base;
+	base = 1000; // determina un arreglo de potencias de la base.
+    Tipo length_bits;
+	length_bits = sizeof(int)*CHAR_BIT;
     Tipo *arr_potencias = genera_array_base(base); // se crea un array con las potencias de la base.
                                        // si es base 2 se trata de una forma especial (moviendo bits)
 
@@ -141,8 +148,9 @@ Tipo *genera_array_base(Tipo base)
     Tipo *arr = new Tipo[MAX_POTENCIAS+2];
 
     arr[0] = base;
-    Tipo potencia = 1;
-    for(Tipo i = 1; i != MAX_POTENCIAS+1; i++){
+    Tipo potencia;
+	potencia = 1;
+    for(int i = 1; i != MAX_POTENCIAS+1; i++){
         potencia *= base;
         arr[i] = potencia;
     }
@@ -151,9 +159,9 @@ Tipo *genera_array_base(Tipo base)
     return arr;
 }
 
-Tipo b_binaria(Tipo num, Tipo arr[], Tipo low, Tipo high); // devuelve el valor de la
+int b_binaria(Tipo num, Tipo arr[], int low, int high); // devuelve el valor de la
                                                     // potencia <= num dentro de arr
-Tipo digitos_base(Tipo num, Tipo arr[], Tipo &grupos)
+Tipo digitos_base(Tipo num, Tipo arr[], int &grupos)
 {
     grupos = b_binaria(num, arr, 0, MAX_POTENCIAS+2 -1);
     if (grupos == 0)
@@ -161,12 +169,12 @@ Tipo digitos_base(Tipo num, Tipo arr[], Tipo &grupos)
     else
         if (grupos == MAX_POTENCIAS+1 )
             grupos = MAX_POTENCIAS;
-    return num / arr [grupos];
+    return num / arr[grupos];
 }
 
-Tipo b_binaria(Tipo x, Tipo arr[], Tipo low, Tipo high)
+int b_binaria(Tipo x, Tipo arr[], int low, int high)
 {
-    Tipo medio;
+    int medio;
     if (high > low)
         medio= (high-low)/2 + low;
     else
