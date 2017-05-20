@@ -24,8 +24,8 @@ int main()
     double segs;
 
 	Tipo x, y;
-	SetBit(x,64);
-    SetBit(y,64);    
+	SetBit(x,16);
+    	SetBit(y,16);    
 
 	x = 34245;
 	y = 8655;
