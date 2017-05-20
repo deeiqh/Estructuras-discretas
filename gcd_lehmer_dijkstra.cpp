@@ -49,10 +49,7 @@ void lehmer_gcd(Tipo x, Tipo y)
     Tipo length_bits = sizeof(int)*CHAR_BIT;
     Tipo *arr_potencias = genera_array_base(base); // se crea un array con las potencias de la base.
                                        // si es base 2 se trata de una forma especial (moviendo bits)
-    cout << "Base: " << 1000 << "\n\n";
-    cout << "x: " << x << "\ty: " << y << '\n';
     while(y >= base){
-
         x_ = digitos_base(x, arr_potencias, grupos_x ); // x_ tendrá los dígitos más significativos que unidos serán <= a la base.
                               // la función usa búsqueda binaria en el array de potencias  de la base
         y_ = digitos_base(y, arr_potencias, grupos_y);
@@ -62,7 +59,7 @@ void lehmer_gcd(Tipo x, Tipo y)
                                                     // Pero si se usa 10 se demora t, con (length_bits - MAX_POTENCIAS +1) le
                                                     // toma menos, t/2, es un número "adecuado".
 	*/
-        cout << "x_: " << x_ << "\t\ty_: " << y_ << "\n\n";
+
         a = 1; b = 0; c = 0; d = 1;
         if(grupos_x == grupos_y){ //necesario pues en la siguiente vuelta hay que asegurar que x e y tengan la misma cantidad d cifras
             while( ((y_+c) != 0) && ((y_+d) != 0) ){
@@ -93,7 +90,6 @@ void lehmer_gcd(Tipo x, Tipo y)
             x = tt;
             y = u;
         }
-        cout << "x: " << x << "\t\ty: " << y << "\n";
     }
 
     clock_t t_fin = clock();
