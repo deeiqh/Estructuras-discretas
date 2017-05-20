@@ -19,17 +19,19 @@ void lehmer_gcd(Tipo x, Tipo y);
 Tipo dijkstra_euclides( Tipo a,  Tipo b);
 
 int iteraciones = 0;
+int almacenamiento = 0;
 int main()
 {
     double segs;
 
 	Tipo x, y;
 	SetBit(x,16);
-    	SetBit(y,16);    
+    SetBit(y,16);    
 
 	x = 34245;
 	y = 8655;
-
+	almacenamiento++;
+	almacenamiento++;
     cout << "Aplicando Lehmer, gcd(" << x << ',' << y << ")\n";
     lehmer_gcd(x,y);
 
@@ -40,6 +42,8 @@ int main()
     cout << dj << " en " << (double)(t_fin - t_ini)*1000.0 / CLOCKS_PER_SEC << '\n';
 
     cout << "Iteraciones totales: " << iteraciones << '\n';
+
+	cout << "Almacenamiento total (cant. de variables): " << almacenamiento << '\n';
     return 0;
 }
 
@@ -51,16 +55,21 @@ void lehmer_gcd(Tipo x, Tipo y)
     clock_t t_ini = clock();
 
     Tipo x_, y_, a, b, c, d;
+	almacenamiento += 6;
     Tipo q, q_, t, tt, u;
+	almacenamiento += 5;
     int grupos_x;
     int grupos_y;
+	almacenamiento += 2;
     Tipo base;
 	base = 1000; // determina un arreglo de potencias de la base.
+	almacenamiento += 1;
     Tipo length_bits;
+	almacenamiento += 1;
 	length_bits = sizeof(int)*CHAR_BIT;
     Tipo *arr_potencias = genera_array_base(base); // se crea un array con las potencias de la base.
                                        // si es base 2 se trata de una forma especial (moviendo bits)
-
+	
     cout << x <<"&"<< y << "\n";
     while(y >= base){
         iteraciones++;
@@ -146,9 +155,10 @@ Tipo *genera_array_base(Tipo base)
     //  retornar lo deseado en la busq. binaria
     //  así se agregan dos elementos más
     Tipo *arr = new Tipo[MAX_POTENCIAS+2];
-
+	almacenamiento += 5;
     arr[0] = base;
     Tipo potencia;
+	almacenamiento += 1;
 	potencia = 1;
     for(int i = 1; i != MAX_POTENCIAS+1; i++){
         potencia *= base;
@@ -175,6 +185,7 @@ Tipo digitos_base(Tipo num, Tipo arr[], int &grupos)
 int b_binaria(Tipo x, Tipo arr[], int low, int high)
 {
     int medio;
+	almacenamiento += 1;
     if (high > low)
         medio= (high-low)/2 + low;
     else
