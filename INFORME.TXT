@@ -1,0 +1,201 @@
+Algoritmo:
+	Tomado de HANDBOOK of APPLIED CRYPTOGRAPHY
+
+INPUT: Dos enteros positivos(x ≥ y) que sean >= a la base.
+OUTPUT: gcd(x, y).
+1. While y ≥ b do the following:
+	1.1 Set x_, y_ to be the high-order digit of x, y, respectively (y_ could be 0).
+	1.2 A←1, B←0, C←0, D←1.
+	1.3 If (grupos_x == grupos_y) // esto se agregó al algoritmo del presente libro
+		1.4 While (y_ + C) /= 0 and (y_ + D) /= 0 do the following:
+			q← (x_ + A)/(y_ + C) , q_ ← (x_ + B)/(y_+ D) .
+			If q = q_ then go to step 1.5.
+			t←A − qC, A←C, C←t, t←B − qD, B←D, D←t.
+			t←x_ − qy_, x_←y_, y_←t.
+	1.5 If B = 0, then T ←x mod y, x←y, y←T ;
+		otherwise, T ←Ax + By, u←Cx + Dy, x←T , y←u.
+2. Compute v = gcd(x, y) using Algorithm 2.104.
+3. Return(v).
+
+Explicación del algoritmo:
+
+Primero es importante definir una base sobre la cual se trabajará, tomaremos 1000 como base.
+Esto significa que los dígitos de los números  a tratar serán agrupados en conjuntos de 3; por ejemplo,
+si tenemos 657343812 y 431056703 se formarán grupos de (657)(343)(812) y (431)(056)(703), y se iterará 
+sobre el grupo más significativo, sin importar que este grupo tenga 3, 2, ó 1 elemento, estos valores se almacenan en x_ e y_, pero nos aseguraremos que estas iteraciones se den siempre y cuando la cantidad de grupos restantes sea la misma (linea 1.3), si no x_ y y_ intercalarán valores por largo tiempo.
+Así cada vez se trabaja sobre un x e y más pequeño, a su vez estos estarán disminuyendo a lo largo de la ejecución, cuando uno de ellos sea menor o igual a la base se podrá proceder con otro método de cálculo del gcd.
+
+Implementación del algoritmo:
+
+Para determinar los grupos de cifras del número se ha empleado un arreglo que contiene las potencias de la base (1000, 1000, 1 000 000, 1 000 000 000,  1 000 000 000), con el primer y último valor repetido, para que con búsqueda binaria se determine el valor adecuado con el que se hará la división para determinar x_ e y_. Por ejemplo: Al buscar 12 345 678 en el arreglo se retornará el índice de 1 000 000 y simplemente se hace 12 345 678 / 1 000 000 para obtener el 12 buscado, el índice sirve para determinar la cantidad de grupos restantes, en este caso 2.
+Una vez simplificado lo suficiente se emplea Dijkstra para los números reducidos.
+
+#include <iostream>
+#include <limits.h>
+
+#define MAX_POTENCIAS 3 // para generar un arreglo de potencias de la base
+
+using namespace std;
+using Tipo = unsigned int;
+
+void lehmer_gcd(Tipo x, Tipo y);
+Tipo dijkstra_euclides( Tipo a,  Tipo b);
+
+int main()
+{
+    double segs;
+
+    Tipo x = 657343812;
+    Tipo y = 431056703;
+
+    cout << "Aplicando Lehmer, gcd(" << x << ',' << y << ")\n";
+    lehmer_gcd(x,y);
+
+    int dj;
+    clock_t t_ini = clock();
+    dj = dijkstra_euclides(x,y);
+    clock_t t_fin = clock();
+    cout << dj << " en " << (double)(t_fin - t_ini)*1000.0 / CLOCKS_PER_SEC;
+    return 0;
+}
+
+Tipo *genera_array_base(Tipo base);
+Tipo digitos_base(Tipo num, Tipo arr[], Tipo &grupos);
+
+void lehmer_gcd(Tipo x, Tipo y)
+{
+    clock_t t_ini = clock();
+
+    Tipo x_, y_, a, b, c, d;
+    Tipo q, q_, t, tt, u;
+    Tipo grupos_x;
+    Tipo grupos_y;
+    Tipo base = 1000; // determina un arreglo de potencias de la base.
+    Tipo length_bits = sizeof(int)*CHAR_BIT;
+    Tipo *arr_potencias = genera_array_base(base); // se crea un array con las potencias de la base.
+                                       // si es base 2 se trata de una forma especial (moviendo bits)
+    while(y >= base){
+
+        x_ = digitos_base(x, arr_potencias, grupos_x ); // x_ tendrá los dígitos más significativos que unidos serán <= a la base.
+                              // la función usa búsqueda binaria en el array de potencias  de la base
+        y_ = digitos_base(y, arr_potencias, grupos_y);
+	
+        a = 1; b = 0; c = 0; d = 1;
+        if(grupos_x == grupos_y){ //necesario pues en la siguiente vuelta hay que asegurar que x e y tengan la misma cantidad d cifras
+            while( ((y_+c) != 0) && ((y_+d) != 0) ){
+                q = (x_+a) / (y_+c);
+                q_ = (x_+b)/ (y_+d);
+                if (q != q_){
+                    break;
+                }
+                t=a-q*c;
+                a = c;
+                c = t;
+                t = b - q*d;
+                b = d;
+                d = t;
+                t = x_ - q*y_;
+                x_ = y_;
+                y_ = t;
+            }
+        }
+        if (b == 0){
+            tt = x%y;
+            x = y;
+            y = tt;
+        }
+        else{
+            tt = a*x + b*y;
+            u = c*x + d*y;
+            x = tt;
+            y = u;
+        }
+    }
+
+    clock_t t_fin = clock();
+
+    cout << "Lehmer redujo a gcd(" << x << ',' << y << ") en ";
+    double segs = (double)(t_fin - t_ini) / CLOCKS_PER_SEC;
+    cout << segs * 1000.0 << " milisegundos. \n" << '\n';
+
+    cout << "Aplicando euclides(dijkstra): gcd(" << x << ',' << y << ") = ";
+
+    t_ini = clock();
+    Tipo v = dijkstra_euclides(x,y);
+    t_fin = clock();
+
+    cout << v << '\n';
+
+    segs += (double)(t_fin - t_ini) / CLOCKS_PER_SEC;
+    cout << "\nTiempo total:" << segs * 1000.0 << " milisegundos" << '\n';
+
+
+}
+
+Tipo *genera_array_base(Tipo base)
+{
+    //repetir el primer y último elemento para
+    //  retornar lo deseado en la busq. binaria
+    //  así se agregan dos elementos más
+    Tipo *arr = new Tipo[MAX_POTENCIAS+2];
+
+    arr[0] = base;
+    Tipo potencia = 1;
+    for(Tipo i = 1; i != MAX_POTENCIAS+1; i++){
+        potencia *= base;
+        arr[i] = potencia;
+    }
+    arr[MAX_POTENCIAS+1] = potencia;
+
+    return arr;
+}
+
+Tipo b_binaria(Tipo num, Tipo arr[], Tipo low, Tipo high); // devuelve el valor de la
+                                                    // potencia <= num dentro de arr
+Tipo digitos_base(Tipo num, Tipo arr[], Tipo &grupos)
+{
+    grupos = b_binaria(num, arr, 0, MAX_POTENCIAS+2 -1);
+    if (grupos == 0)
+        grupos = 1;
+    else
+        if (grupos == MAX_POTENCIAS+1 )
+            grupos = MAX_POTENCIAS;
+    return num / arr [grupos];
+}
+
+Tipo b_binaria(Tipo x, Tipo arr[], Tipo low, Tipo high)
+{
+    Tipo medio;
+    if (high > low)
+        medio= (high-low)/2 + low;
+    else
+        medio = (low-high)/2 + low;
+    if(arr[medio] == x || (low > high))
+        return (low-1); //medio == low, asi retorna la potencia menor de la base
+    else{
+        if (arr[medio] < x)
+            return b_binaria(x,arr,medio+1, high);
+        else
+            return b_binaria(x,arr,low,medio-1);
+    }
+}
+
+Tipo dijkstra_euclides( Tipo a,  Tipo b){
+    if(a==0 || b==0)
+        return a+b;
+    else if(a>b){
+        a%=b;
+        return dijkstra_euclides(a,b);
+    }
+    else if(b>a){
+        b%=a;
+        return dijkstra_euclides(a,b);
+    }
+}
+
+Detallar como el contenido de las variables cambia en cada paso (Seguimiento de código
+con datos de entrada reales (números enteros):
+
+
+
+
