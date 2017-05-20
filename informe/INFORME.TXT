@@ -70,7 +70,6 @@ void lehmer_gcd(Tipo x, Tipo y)
     Tipo grupos_x;
     Tipo grupos_y;
     Tipo base = 1000; // determina un arreglo de potencias de la base.
-    Tipo length_bits = sizeof(int)*CHAR_BIT;
     Tipo *arr_potencias = genera_array_base(base); // se crea un array con las potencias de la base.
                                        // si es base 2 se trata de una forma especial (moviendo bits)
     while(y >= base){
