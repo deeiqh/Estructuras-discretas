@@ -124,18 +124,19 @@ int main()
         //MILLER
         ZZ k = conv<ZZ>(4);
         ZZ mod;
-        mod = module(numero,conv<ZZ>(2));
-        if(mod != 0){
+        
+
                 while(!isPrime(numero, k)){
-                     numero += 2;   
                      mod = module(numero,conv<ZZ>(2));
                      if (mod == 0)
                         numero += 1;
+                     else 
+                        numero += 2;
                         
                 }
                 cout << numero << '\n'; 
                 cout << "yes\n";
-        }
+        
       
     }   
     else
