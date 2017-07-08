@@ -119,7 +119,7 @@ int main()
             arr2[i] = arr[i];        
         ZZFromBytes(numero, arr2, n_bytes);
         
-        cout << numero << '\n';      
+             
         
         //MILLER
         ZZ k = conv<ZZ>(4);
@@ -128,7 +128,12 @@ int main()
         if(mod != 0){
                 while(!isPrime(numero, k)){
                      numero += 2;   
+                     mod = module(numero,conv<ZZ>(2));
+                     if (mod == 0)
+                        numero += 1;
+                        
                 }
+                cout << numero << '\n'; 
                 cout << "yes\n";
         }
       
